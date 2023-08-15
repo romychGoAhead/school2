@@ -1,56 +1,57 @@
 package ru.hogwarts2.school2.service;
+
 import org.springframework.stereotype.Service;
-import ru.hogwarts2.school2.exception.DataNotFoundException;
+import ru.hogwarts2.school2.exception.StudentNotFoundException;
 import ru.hogwarts2.school2.model.Student;
+import ru.hogwarts2.school2.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
+
 
 @Service
 public class StudentService {
-    private final Map<Long, Student> map = new HashMap<>(); // завести HashMap
-    private Long COUNTER = 1L;   // создаем счетчик идентификатора, который будет инкрементироваться при каждом добавлении нового объекта модели в HashMap.
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    // создаем счетчик идентификатора, который будет инкрементироваться при каждом добавлении нового объекта модели в HashMap.
 
 // добавляем CRUD операции
 
-    public Student getById(Long id) {    // вернуть по Id
-        return map.get(id);
+    public Student getById(Long id) {
+        return studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
+
     }
 
-    public Collection<Student> getAll() {   //вернуть всех
-        return map.values();
+    public Collection<Student> getAll() {
+        return studentRepository.findAll();
     }
 
-    public Collection <Student> getByAge(int age){
-        return map.values().stream()
-                .filter(student -> student.getAge()==age)
-                .toList();
+    public Collection<Student> getByAge(int age) {
+    return studentRepository.findAllByAge(age);
 
     }   // фильтрация по возрасту
 
     public Student create(Student student) {
-        Long nextId = COUNTER++;                // генерация ID
-        student.setId(nextId);                        // и ставим этот Id студенту который пришел
-        map.put(student.getId(), student);        // создаем студента
-        return student;
+        return studentRepository.save(student);
     }
 
     public Student update(Long id, Student student) {
-        if (!map.containsKey(id)) {
-            throw new DataNotFoundException();
-        }
-        Student exsitingStudent = map.get(id); // существующий студент
-        exsitingStudent.setName(student.getName()); // обновим его поля
+        Student exsitingStudent = studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
+        Optional.ofNullable(student.getName()).ifPresent(exsitingStudent::setName);
+        Optional.ofNullable(student.getAge()).ifPresent(exsitingStudent::setAge);
         exsitingStudent.setAge(student.getAge());
+        return studentRepository.save(exsitingStudent);
+    }
+
+    public Student remove(Long id) {
+        Student exsitingStudent = studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
+        studentRepository.delete(exsitingStudent);
         return exsitingStudent;
     }
 
-    public void delete(Long id) {
-        if (map.remove(id) == null) {
-            throw new DataNotFoundException();
-        }
-
-    }
-
 }
+
