@@ -40,7 +40,7 @@ public class FacultyController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        facultyService.delete(id);
+    public Faculty remove (@PathVariable Long id) {
+        return facultyService.remove(id);
     }
 }
