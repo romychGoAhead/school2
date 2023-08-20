@@ -1,38 +1,49 @@
 package ru.hogwarts2.school2.service;
 
-import org.junit.jupiter.api.DisplayName;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.hogwarts2.school2.model.Faculty;
+import ru.hogwarts2.school2.repository.FacultyRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+
+
+
+@ExtendWith(MockitoExtension.class)
 public class FacultyServiceTest {
+    @Mock
+    private FacultyRepository facultyRepository;
+
+    @InjectMocks
+    private FacultyService facultyService;
 
     @Test
-    @DisplayName("Проверка по индексу")
-    void getByIndex() {
+    void receiving() { //получение
+        String color = "синий";
+        List<Faculty> faculties = getFaculty();
 
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            list.add(i);
-        }
-        Integer element = list.get(2);
-        assertNotNull(element);
-        assertEquals(2, element);
+        Mockito.when(facultyRepository.findAllByColor(color)).thenReturn(faculties);
+
+       Collection<Faculty> result = facultyService.getByColor(color);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2,result.size());
+
     }
-
-    @Test
-    void indexOutRange() {
-
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            list.add(i);
-        }
-        assertThrows(IndexOutOfBoundsException.class, () -> {
-            list.get(4);
-        });
+    private List<Faculty> getFaculty(){
+Faculty firstFacultu = new Faculty();
+Faculty secondFacultu = new Faculty();
+firstFacultu.setColor("cиний");
+secondFacultu.setColor("зеленый");
+return List.of(firstFacultu, secondFacultu);
 
     }
 }

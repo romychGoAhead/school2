@@ -1,37 +1,47 @@
 package ru.hogwarts2.school2.service;
 
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import ru.hogwarts2.school2.model.Student;
+import ru.hogwarts2.school2.repository.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.*;
+
+@ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
-    @Test
-    @DisplayName("Проверка по индексу")
-    void getByIndex() {
+    @Mock
+    private StudentRepository studentRepository;
 
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            list.add(i);
-        }
-        Integer element = list.get(3);
-        assertNotNull(element);
-        assertEquals(3, element);
+    @InjectMocks
+    private StudentService studentService;
+
+    @Test
+    void receiving() {
+        int age = 12;
+        List<Student> students = getStudent();
+
+        Mockito.when(studentRepository.findAllByAge(age)).thenReturn(students);
+
+        Collection<Student> result = studentService.getByAge(age);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+
     }
 
-    @Test
-    void indexOutRange() {
-
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            list.add(i);
-        }
-        assertThrows(IndexOutOfBoundsException.class, () -> {
-            list.get(5);
-        });
+    private List<Student> getStudent() {
+        Student firstStudent = new Student();
+        Student secondStudent = new Student();
+        firstStudent.setAge(12);
+        secondStudent.setAge(13);
+        return List.of(firstStudent, secondStudent);
 
     }
 }

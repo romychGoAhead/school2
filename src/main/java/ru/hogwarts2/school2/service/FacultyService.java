@@ -7,6 +7,7 @@ import ru.hogwarts2.school2.repository.FacultyRepository;
 
 
 import java.util.Collection;
+import java.util.HashMap;
 
 
 @Service
@@ -45,7 +46,6 @@ public class FacultyService {
 
         return facultyRepository.save(existingFaculty); // сохраняем сущ. факультет
     }
-
 
     public Faculty remove(long id) {
         Faculty faculty = facultyRepository.findById(id)
