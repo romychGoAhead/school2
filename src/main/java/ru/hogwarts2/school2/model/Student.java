@@ -1,9 +1,9 @@
 package ru.hogwarts2.school2.model;
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
@@ -13,12 +13,12 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // создает отдельный счетчик
     private Long id;
     private String name;
-    private int age;
+    private Integer age;
 
     public Student() {  // конструктор без параметров
     }
 
-    public Student(Long id, String name, int age) {
+    public Student(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -40,11 +40,11 @@ public class Student {
         this.name = name;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -53,7 +53,8 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
+        return Objects.equals(age, student.age) && Objects.equals(id, student.id)&&
+                Objects.equals(name, student.name);
     }
 
     @Override
